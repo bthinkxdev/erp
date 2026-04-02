@@ -1,0 +1,17 @@
+.git
+.github
+**/__pycache__
+**/*.pyc
+.venv
+venv
+env
+ENV
+*.sqlite3
+.env
+.env.*
+!.env.example
+mcps
+.cursor
+*.md
+htmlcov
+.pytest_cache

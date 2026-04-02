@@ -41,6 +41,8 @@ db_custom.sqlite3
 
 # Collected static assets & user uploads (dev)
 staticfiles/
+# Production collectstatic target (BASE_DIR / static)
+/static/
 media/
 
 # --- Environment & secrets ---
