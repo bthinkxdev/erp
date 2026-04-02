@@ -1,0 +1,52 @@
+{% extends "store/base_public.html" %}
+
+{% block store_title %}Categories{% endblock %}
+
+{% block store_main %}
+<div class="mb-2">
+    <h2 class="text-xl font-bold tracking-tight text-slate-900">Shop by category</h2>
+    <p class="text-sm text-slate-500 mt-1 leading-relaxed">Browse collections curated for you</p>
+</div>
+
+{% if categories %}
+<ul class="flex flex-col gap-4 mt-6" role="list">
+    {% for cat in categories %}
+    <li>
+        <a href="{% url 'store:category' store_vendor.pk cat.pk %}{{ store_staff_query }}"
+           class="store-tile-press group block relative rounded-[1.35rem] overflow-hidden bg-slate-100 shadow-md shadow-slate-900/8 ring-1 ring-slate-200/80 transition-all duration-300 ease-out hover:shadow-xl hover:shadow-emerald-900/12 hover:ring-emerald-200/50 active:scale-[0.985] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500">
+            <div class="aspect-[16/10] w-full relative">
+                {% if cat.image %}
+                <img src="{{ cat.image.url }}" alt=""
+                     class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"/>
+                {% else %}
+                <div class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-200/90 via-slate-100 to-white">
+                    <svg class="w-14 h-14 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                {% endif %}
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/88 via-slate-900/35 to-slate-900/10 pointer-events-none" aria-hidden="true"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-5 pt-12">
+                    <p class="text-[1.125rem] font-bold tracking-tight text-white leading-tight drop-shadow-sm">{{ cat.name }}</p>
+                    <p class="text-sm font-medium text-white/90 mt-1.5 flex items-center gap-1">
+                        View products
+                        <svg class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                    </p>
+                </div>
+            </div>
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<div class="mt-10 rounded-[1.35rem] border border-slate-200/90 bg-white/90 px-6 py-14 text-center shadow-sm ring-1 ring-slate-100">
+    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 mb-5">
+        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+        </svg>
+    </div>
+    <h3 class="text-lg font-semibold text-slate-900 tracking-tight">We're restocking</h3>
+    <p class="text-sm text-slate-500 mt-2 leading-relaxed max-w-xs mx-auto">Categories will appear here as soon as they're live. Check back soon.</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,33 @@
+{# Reusable HTMX modal shell. Include with: modal_title, modal_body_template, dismiss_url, host_id, panel_id #}
+{# Defaults align with product category modal; override dismiss_url, host_id, panel_id if needed. #}
+<div class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center sm:p-4"
+     id="{{ modal_dom_id|default:'htmx-modal-overlay' }}">
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-[1px]"
+         hx-get="{{ dismiss_url }}"
+         hx-target="{{ host_selector|default:'#category-modal-host' }}"
+         hx-swap="innerHTML"
+         aria-hidden="true"></div>
+    <div class="relative w-full {{ modal_width_class|default:'max-w-lg' }} bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl border border-slate-200/80 max-h-[min(90vh,640px)] flex flex-col sm:max-h-[85vh]"
+         role="dialog"
+         aria-modal="true"
+         onclick="event.stopPropagation()">
+        <header class="flex items-center justify-between gap-3 px-5 py-4 border-b border-slate-100 flex-shrink-0">
+            <h2 class="text-base font-semibold text-slate-900 truncate">{{ modal_title }}</h2>
+            <button type="button"
+                    class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors flex-shrink-0"
+                    hx-get="{{ dismiss_url }}"
+                    hx-target="{{ host_selector|default:'#category-modal-host' }}"
+                    hx-swap="innerHTML"
+                    aria-label="Close">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </header>
+        <div id="{{ panel_id|default:'category-modal-panel' }}" class="overflow-y-auto flex-1 p-4 sm:p-5 min-h-0">
+            {% if modal_body_template %}
+                {% include modal_body_template %}
+            {% endif %}
+        </div>
+    </div>
+</div>

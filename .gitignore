@@ -1,0 +1,100 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# --- Django ---
+*.log
+local_settings.py
+db.sqlite3
+db_custom.sqlite3
+*.sqlite3-journal
+
+# Collected static assets & user uploads (dev)
+staticfiles/
+media/
+
+# --- Environment & secrets ---
+.env
+.env.*
+!.env.example
+*.pem
+secrets.json
+
+# --- Testing & coverage ---
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+
+# --- Type checkers & linters ---
+.mypy_cache/
+.ruff_cache/
+.dmypy.json
+dmypy.json
+
+# --- IDEs & editors ---
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# VS Code (local workspace state — uncomment to version shared recommendations)
+.vscode/
+
+# --- OS ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# --- Packaging / notebooks (if added later) ---
+*.manifest
+*.spec
+.ipynb_checkpoints/
+
+# --- Node (if frontend tooling is added at repo root) ---
+node_modules/

@@ -1,0 +1,142 @@
+{% extends "base/layout.html" %}
+
+{% block title %}Edit {{ staff_member.user.username }}{% endblock %}
+
+{% block page_title %}Edit Staff{% endblock %}
+{% block page_subtitle %}<p class="text-xs text-slate-400 mt-px hidden sm:block">{{ staff_member.user.username }} — {{ staff_member.user.email }}</p>{% endblock %}
+
+{% block header_actions %}
+<div class="flex flex-col items-stretch sm:flex-row sm:items-center gap-2 w-full sm:w-auto">
+    {% if staff_store_share_url %}
+    <button type="button"
+            data-store-url="{{ staff_store_share_url }}"
+            title="Customers who open this link will send WhatsApp orders to this member’s number (below), not the business default."
+            onclick="(function(btn){var u=btn.getAttribute('data-store-url');var a=btn.querySelector('.js-copy-lbl-desktop');var b=btn.querySelector('.js-copy-lbl-mobile');if(!u)return;var d=a&&a.textContent,m=b&&b.textContent;function rst(){if(a)a.textContent=d;if(b)b.textContent=m;btn.classList.remove('bg-emerald-50','border-emerald-200','text-emerald-800')}navigator.clipboard.writeText(u).then(function(){if(a)a.textContent='Copied!';if(b)b.textContent='Copied!';btn.classList.add('bg-emerald-50','border-emerald-200','text-emerald-800');setTimeout(rst,2000)}).catch(function(){prompt('Copy link:',u)})})(this)"
+            class="inline-flex items-center justify-center gap-2 px-3.5 py-2 bg-white border border-slate-300 hover:border-slate-400 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm">
+        <svg class="w-4 h-4 text-slate-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+        <span class="js-copy-lbl-desktop hidden sm:inline">Copy member’s store link</span>
+        <span class="js-copy-lbl-mobile sm:hidden">Store link</span>
+    </button>
+    {% endif %}
+    <a href="{% url 'staff:list' %}"
+       class="inline-flex items-center justify-center gap-2 px-3.5 py-2 bg-white border border-slate-300 hover:border-slate-400 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Back
+    </a>
+</div>
+{% endblock %}
+
+{% block page_content %}
+
+<div class="max-w-xl">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
+        <div class="px-6 py-5 border-b border-slate-100">
+            <h2 class="text-sm font-semibold text-slate-900">Contact &amp; access</h2>
+            <p class="text-xs text-slate-400 mt-0.5">Username and email cannot be changed here yet.</p>
+        </div>
+
+        <form method="post"
+              hx-post="{% url 'staff:edit' staff_member.pk %}"
+              hx-target="body"
+              hx-push-url="true"
+              class="px-6 py-5 space-y-4">
+            {% csrf_token %}
+
+            <div>
+                <label for="{{ form.whatsapp_number.id_for_label }}" class="block text-xs font-medium text-slate-700 mb-1.5">
+                    WhatsApp number <span class="text-red-500">*</span>
+                </label>
+                <p class="text-[11px] text-slate-400 mb-1.5">Digits only; country code without + (e.g. 919876543210). Public orders only reach this number when customers use <strong class="text-slate-500">this member’s store link</strong> (button above), or when they sign in and copy from Products.</p>
+                <input type="tel"
+                       name="{{ form.whatsapp_number.html_name }}"
+                       id="{{ form.whatsapp_number.id_for_label }}"
+                       value="{{ form.whatsapp_number.value|default_if_none:'' }}"
+                       inputmode="numeric"
+                       autocomplete="tel"
+                       class="w-full px-3.5 py-2.5 text-sm border rounded-lg transition
+                              {% if form.whatsapp_number.errors %}border-red-400 bg-red-50{% else %}border-slate-300{% endif %}
+                              focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono"/>
+                {% if form.whatsapp_number.errors %}<p class="mt-1 text-xs text-red-600">{{ form.whatsapp_number.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div class="flex items-center gap-3">
+                <input type="checkbox"
+                       name="{{ form.is_active.html_name }}"
+                       id="{{ form.is_active.id_for_label }}"
+                       {% if form.is_active.value %}checked{% endif %}
+                       class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"/>
+                <label for="{{ form.is_active.id_for_label }}" class="text-sm text-slate-700">Active (can sign in)</label>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 space-y-3">
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Permissions</p>
+                <label class="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" name="{{ form.can_view_all_collections.html_name }}" id="{{ form.can_view_all_collections.id_for_label }}"
+                           {% if form.can_view_all_collections.value %}checked{% endif %}
+                           class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"/>
+                    <span class="text-sm text-slate-700">View all collections (vendor-wide)</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" name="{{ form.can_edit_collection.html_name }}" id="{{ form.can_edit_collection.id_for_label }}"
+                           {% if form.can_edit_collection.value %}checked{% endif %}
+                           class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"/>
+                    <span class="text-sm text-slate-700">Edit any team member’s collections</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" name="{{ form.can_view_reports.html_name }}" id="{{ form.can_view_reports.id_for_label }}"
+                           {% if form.can_view_reports.value %}checked{% endif %}
+                           class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"/>
+                    <span class="text-sm text-slate-700">Access analytics &amp; reports</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" name="{{ form.can_export_data.html_name }}" id="{{ form.can_export_data.id_for_label }}"
+                           {% if form.can_export_data.value %}checked{% endif %}
+                           class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"/>
+                    <span class="text-sm text-slate-700">Export CSV downloads</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" name="{{ form.can_manage_products.html_name }}" id="{{ form.can_manage_products.id_for_label }}"
+                           {% if form.can_manage_products.value %}checked{% endif %}
+                           class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"/>
+                    <span class="text-sm text-slate-700">Add &amp; edit products</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" name="{{ form.can_manage_categories.html_name }}" id="{{ form.can_manage_categories.id_for_label }}"
+                           {% if form.can_manage_categories.value %}checked{% endif %}
+                           class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"/>
+                    <span class="text-sm text-slate-700">Add &amp; edit product categories</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" name="{{ form.can_add_customers.html_name }}" id="{{ form.can_add_customers.id_for_label }}"
+                           {% if form.can_add_customers.value %}checked{% endif %}
+                           class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"/>
+                    <span class="text-sm text-slate-700">Add customers</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" name="{{ form.can_edit_customers.html_name }}" id="{{ form.can_edit_customers.id_for_label }}"
+                           {% if form.can_edit_customers.value %}checked{% endif %}
+                           class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"/>
+                    <span class="text-sm text-slate-700">Edit customers</span>
+                </label>
+            </div>
+
+            {% if form.non_field_errors %}
+            <div class="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-600">
+                {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 mt-5">
+                <a href="{% url 'staff:list' %}" class="px-4 py-2 text-sm text-slate-600 hover:text-slate-900 font-medium transition-colors">Cancel</a>
+                <button type="submit"
+                        class="inline-flex items-center gap-2 px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm shadow-indigo-200">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

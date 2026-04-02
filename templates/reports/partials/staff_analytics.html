@@ -1,0 +1,58 @@
+<div class="space-y-5 mt-4">
+
+    {% if rows %}
+    <div class="overflow-x-auto rounded-lg border border-slate-200">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="bg-slate-50 border-b border-slate-200">
+                    <th class="px-4 py-2.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Staff</th>
+                    <th class="px-4 py-2.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wide">Collections</th>
+                    <th class="px-4 py-2.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wide">Total</th>
+                    <th class="px-4 py-2.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wide">Avg/Day</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                {% for row in rows %}
+                <tr class="hover:bg-slate-50/60 transition-colors">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center flex-shrink-0">
+                                <span class="text-white text-xs font-semibold">{{ row.staff__user__username|first|upper }}</span>
+                            </div>
+                            <span class="font-medium text-slate-800">{{ row.staff__user__username }}</span>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3 text-right text-slate-600 tabular-nums">{{ row.count|default:"0" }}</td>
+                    <td class="px-4 py-3 text-right font-semibold text-slate-900 tabular-nums">₹{{ row.total|default:"0.00" }}</td>
+                    <td class="px-4 py-3 text-right text-slate-500 tabular-nums">₹{{ row.avg_per_day|default:"0.00" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if top_rows %}
+    <div>
+        <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Top Performers</h4>
+        <div class="space-y-2">
+            {% for row in top_rows %}
+            <div class="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-lg">
+                <span class="text-xs font-bold text-slate-400 w-5 text-center">{{ forloop.counter }}</span>
+                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
+                    <span class="text-white text-xs font-semibold">{{ row.staff__user__username|first|upper }}</span>
+                </div>
+                <span class="flex-1 text-sm font-medium text-slate-700">{{ row.staff__user__username }}</span>
+                <span class="text-sm font-bold text-slate-900 tabular-nums">₹{{ row.total|default:"0.00" }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="text-center py-8 text-sm text-slate-400 border border-dashed border-slate-200 rounded-lg">
+        No staff data for the selected period.
+    </div>
+    {% endif %}
+
+</div>

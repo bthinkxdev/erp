@@ -1,0 +1,60 @@
+<div class="space-y-4">
+    <h3 class="text-sm font-semibold text-slate-900">{% if form.instance.pk %}Edit category{% else %}New category{% endif %}</h3>
+
+    <form hx-post="{{ submit_url }}"
+          hx-encoding="multipart/form-data"
+          hx-target="#category-modal-panel"
+          hx-swap="innerHTML"
+          class="space-y-4">
+        {% csrf_token %}
+
+        <div>
+            <label for="{{ form.name.id_for_label }}" class="block text-xs font-medium text-slate-700 mb-1.5">Name <span class="text-red-500">*</span></label>
+            <input type="text"
+                   name="{{ form.name.html_name }}"
+                   id="{{ form.name.id_for_label }}"
+                   value="{{ form.name.value|default_if_none:'' }}"
+                   class="w-full px-3.5 py-2.5 text-sm border rounded-lg border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 {% if form.name.errors %}border-red-400 bg-red-50{% endif %}"/>
+            {% if form.name.errors %}<p class="mt-1 text-xs text-red-600">{{ form.name.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div>
+            <label for="{{ form.image.id_for_label }}" class="block text-xs font-medium text-slate-700 mb-1.5">Image <span class="text-slate-400 font-normal">(optional)</span></label>
+            <input type="file"
+                   name="{{ form.image.html_name }}"
+                   id="{{ form.image.id_for_label }}"
+                   accept="image/*"
+                   class="block w-full text-sm text-slate-600 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"/>
+            {% if form.image.errors %}<p class="mt-1 text-xs text-red-600">{{ form.image.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-slate-50 border border-slate-100">
+            <input type="checkbox"
+                   name="{{ form.is_active.html_name }}"
+                   id="{{ form.is_active.id_for_label }}"
+                   {% if form.is_active.value %}checked{% endif %}
+                   class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"/>
+            <label for="{{ form.is_active.id_for_label }}" class="text-sm text-slate-700">Active</label>
+        </div>
+
+        {% if form.non_field_errors %}
+        <div class="p-3 rounded-lg bg-red-50 border border-red-200 text-xs text-red-600">
+            {% for e in form.non_field_errors %}{{ e }}{% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+            <button type="button"
+                    hx-get="{{ cancel_url }}"
+                    hx-target="#category-modal-panel"
+                    hx-swap="innerHTML"
+                    class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
+                Cancel
+            </button>
+            <button type="submit"
+                    class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors">
+                Save
+            </button>
+        </div>
+    </form>
+</div>

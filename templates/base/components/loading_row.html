@@ -1,0 +1,9 @@
+{% for i in "12345"|make_list %}
+<tr class="animate-pulse">
+    {% for j in "123456"|make_list|slice:cols %}
+    <td class="px-5 py-3.5">
+        <div class="h-3.5 bg-slate-200 rounded-full {% if forloop.first %}w-32{% elif forloop.last %}w-16{% else %}w-24{% endif %}"></div>
+    </td>
+    {% endfor %}
+</tr>
+{% endfor %}

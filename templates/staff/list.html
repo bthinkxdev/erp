@@ -1,0 +1,124 @@
+{% extends "base/layout.html" %}
+
+{% block title %}Staff{% endblock %}
+
+{% block page_title %}Staff{% endblock %}
+{% block page_badge %}
+<span class="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 font-medium tabular-nums" id="staff-count-badge">
+    {{ total_count }}
+</span>
+{% endblock %}
+{% block page_subtitle %}<p class="text-xs text-slate-400 mt-px hidden sm:block">Manage team logins for collections and reports</p>{% endblock %}
+
+{% block header_actions %}
+<button type="button"
+        class="inline-flex items-center gap-2 px-3.5 py-2 bg-white border border-slate-300 hover:border-slate-400 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm"
+        hx-get="{% url 'staff:collections_ledger_modal' %}"
+        hx-target="#staff-ledger-modal-host"
+        hx-swap="innerHTML"
+        title="Date-filtered collection ledger for your business">
+    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+    </svg>
+    <span class="hidden sm:inline">Collection ledger</span>
+</button>
+<a href="{% url 'staff:add' %}"
+   class="inline-flex items-center gap-2 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm shadow-indigo-200">
+    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+    </svg>
+    <span class="hidden sm:inline">Add Staff</span>
+</a>
+{% endblock %}
+
+{% block page_content %}
+
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 px-5 py-4 border-b border-slate-100">
+        <div class="relative flex-1 w-full">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"
+                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0"/>
+            </svg>
+            <input type="search"
+                   name="q"
+                   id="staff-search"
+                   placeholder="Search by username or email…"
+                   value="{{ request.GET.q }}"
+                   autocomplete="off"
+                   class="w-full pl-9 pr-4 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                   hx-get="{% url 'staff:list' %}"
+                   hx-trigger="keyup changed delay:350ms, search"
+                   hx-target="#staff-table-body"
+                   hx-swap="innerHTML"
+                   hx-include="[name='q']"
+                   hx-indicator="#staff-search-spinner"/>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0">
+            <svg id="staff-search-spinner"
+                 class="htmx-indicator w-4 h-4 animate-spin text-indigo-500"
+                 fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+            </svg>
+            <span class="text-xs text-slate-400 hidden sm:inline">
+                <span id="staff-result-count">{{ total_count }}</span> records
+            </span>
+        </div>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead>
+                <tr class="border-b border-slate-100">
+                    <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">#</th>
+                    <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">User</th>
+                    <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Email</th>
+                    <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide hidden md:table-cell">WhatsApp</th>
+                    <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Status</th>
+                    <th class="px-5 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wide">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="staff-table-body" class="divide-y divide-slate-50">
+                {% include "staff/_rows.html" %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <div class="flex items-center justify-between px-5 py-4 border-t border-slate-100">
+        <p class="text-xs text-slate-400">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </p>
+        <div class="flex items-center gap-1">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+               class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+            </a>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <span class="w-8 h-8 flex items-center justify-center text-xs font-semibold bg-indigo-600 text-white rounded-lg">{{ num }}</span>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+                   class="w-8 h-8 flex items-center justify-center text-xs text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+               class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<div id="staff-ledger-modal-host"></div>
+
+{% endblock %}

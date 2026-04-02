@@ -1,0 +1,23 @@
+{% with c=color|default:"indigo" %}
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-5">
+    <div class="flex items-start justify-between">
+        <div>
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">{{ title }}</p>
+            <p class="text-2xl font-bold text-slate-900 tabular-nums">{{ value|default:"—" }}</p>
+            {% if sub %}
+            <p class="text-xs text-slate-400 mt-1.5">{{ sub }}</p>
+            {% endif %}
+        </div>
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0
+                    {% if c == 'emerald' %}bg-emerald-100 text-emerald-600
+                    {% elif c == 'amber' %}bg-amber-100 text-amber-600
+                    {% elif c == 'rose' %}bg-rose-100 text-rose-600
+                    {% elif c == 'violet' %}bg-violet-100 text-violet-600
+                    {% else %}bg-indigo-100 text-indigo-600{% endif %}">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                {{ icon_path|safe }}
+            </svg>
+        </div>
+    </div>
+</div>
+{% endwith %}

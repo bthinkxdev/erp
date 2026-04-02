@@ -1,0 +1,22 @@
+{% with c=color|default:"gray" %}
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium
+             {% if c == 'green' or c == 'success' %}bg-emerald-100 text-emerald-700
+             {% elif c == 'yellow' or c == 'warning' %}bg-amber-100 text-amber-700
+             {% elif c == 'red' or c == 'danger' or c == 'error' %}bg-red-100 text-red-700
+             {% elif c == 'blue' %}bg-blue-100 text-blue-700
+             {% elif c == 'indigo' %}bg-indigo-100 text-indigo-700
+             {% elif c == 'violet' %}bg-violet-100 text-violet-700
+             {% else %}bg-slate-100 text-slate-600{% endif %}">
+    {% if dot %}
+    <span class="w-1.5 h-1.5 rounded-full
+                 {% if c == 'green' or c == 'success' %}bg-emerald-500
+                 {% elif c == 'yellow' or c == 'warning' %}bg-amber-500
+                 {% elif c == 'red' or c == 'danger' or c == 'error' %}bg-red-500
+                 {% elif c == 'blue' %}bg-blue-500
+                 {% elif c == 'indigo' %}bg-indigo-500
+                 {% elif c == 'violet' %}bg-violet-500
+                 {% else %}bg-slate-400{% endif %}"></span>
+    {% endif %}
+    {{ label }}
+</span>
+{% endwith %}

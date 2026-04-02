@@ -1,0 +1,46 @@
+{% if staff_rows %}
+<div class="overflow-x-auto">
+    <table class="w-full">
+        <thead>
+            <tr class="border-b border-slate-100">
+                <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Staff Member</th>
+                <th class="px-5 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wide">Collections</th>
+                <th class="px-5 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wide">Total Amount</th>
+                <th class="px-5 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wide">Share</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-50">
+            {% for row in staff_rows %}
+            <tr class="hover:bg-slate-50/70 transition-colors">
+                <td class="px-5 py-3.5">
+                    <div class="flex items-center gap-3">
+                        <div class="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center flex-shrink-0">
+                            <span class="text-white text-xs font-semibold">{{ row.staff__user__username|first|upper }}</span>
+                        </div>
+                        <span class="text-sm font-medium text-slate-800">{{ row.staff__user__username }}</span>
+                    </div>
+                </td>
+                <td class="px-5 py-3.5 text-right">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+                        {{ row.count|default:"0" }}
+                    </span>
+                </td>
+                <td class="px-5 py-3.5 text-right text-sm font-semibold text-slate-900 tabular-nums">
+                    ₹{{ row.total|default:"0.00" }}
+                </td>
+                <td class="px-5 py-3.5 text-right">
+                    <div class="flex items-center justify-end gap-2">
+                        <div class="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden hidden sm:block">
+                            <div class="h-full bg-indigo-500 rounded-full" style="width: {{ row.pct|default:0 }}%"></div>
+                        </div>
+                        <span class="text-xs text-slate-500 tabular-nums">{{ row.pct|default:"0" }}%</span>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+{% include "base/components/empty_state.html" with title="No staff data" message="No collections recorded yet." %}
+{% endif %}

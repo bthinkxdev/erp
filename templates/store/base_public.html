@@ -1,0 +1,66 @@
+{% extends "base/base.html" %}
+{% block title %}{% block store_title %}Store{% endblock %} — {{ store_vendor.name }}{% endblock %}
+
+{% block extra_head %}
+{{ block.super }}
+<style>
+    @keyframes store-cta-soft-bounce {
+        0%, 100% { transform: translateY(0); }
+        45% { transform: translateY(-3px); }
+        55% { transform: translateY(-1px); }
+    }
+    .store-cta-bounce {
+        animation: store-cta-soft-bounce 2.4s ease-in-out infinite;
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .store-cta-bounce { animation: none; }
+        .store-pressable:active,
+        .store-tile-press:active { transform: none !important; }
+    }
+    .store-shell {
+        --store-safe-t: max(0.75rem, env(safe-area-inset-top, 0px));
+        --store-safe-b: max(0.75rem, env(safe-area-inset-bottom, 0px));
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="store-shell min-h-full bg-gradient-to-b from-slate-50 via-white to-slate-50/90 text-slate-900 antialiased">
+    <header class="sticky top-0 z-30 border-b border-slate-200/60 bg-white/72 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_1px_0_rgba(15,23,42,0.04)]">
+        <div class="max-w-[480px] mx-auto px-4 pt-[var(--store-safe-t)] pb-4">
+            <div class="flex items-start gap-3.5">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-600/25 flex-shrink-0 ring-1 ring-white/30" aria-hidden="true">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                    </svg>
+                </div>
+                <div class="min-w-0 flex-1">
+                    <h1 class="text-[1.375rem] sm:text-2xl font-bold tracking-tight text-slate-900 leading-[1.15]">
+                        {{ store_vendor.name }}
+                    </h1>
+                    <p class="text-sm text-slate-500 mt-1.5 leading-snug">
+                        Secure checkout on WhatsApp — fast, personal help
+                    </p>
+                    {% if store_staff %}
+                    <span class="mt-2.5 inline-flex items-center gap-1.5 rounded-full border border-emerald-200/90 bg-emerald-50/95 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-emerald-900 shadow-sm shadow-emerald-900/5">
+                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden="true"></span>
+                        With {{ store_staff.user.get_full_name|default:store_staff.user.username }}
+                    </span>
+                    {% else %}
+                    <span class="mt-2.5 inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/80 px-2.5 py-1 text-[11px] font-medium text-slate-600">
+                        <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                        Official store
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-[480px] mx-auto px-4 pt-6 {% block store_main_pb %}pb-[max(7rem,env(safe-area-inset-bottom,0px))]{% endblock %}">
+        {% block store_main %}{% endblock %}
+    </main>
+
+    {% block store_sticky_footer %}{% endblock %}
+</div>
+{% endblock %}
