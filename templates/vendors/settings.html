@@ -8,19 +8,21 @@
 {% endblock %}
 
 {% block header_actions %}
-<a href="{% url 'reports:dashboard' %}"
-   class="inline-flex items-center justify-center gap-2 px-3.5 py-2 w-full sm:w-auto bg-white border border-slate-300 hover:border-slate-400 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm">
-    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
-    </svg>
-    Dashboard
-</a>
+<div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+    <a href="{% url 'reports:dashboard' %}"
+       class="inline-flex items-center justify-center gap-2 px-3.5 py-2 w-full sm:w-auto bg-white border border-slate-300 hover:border-slate-400 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm">
+        <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Dashboard
+    </a>
+</div>
 {% endblock %}
 
 {% block page_content %}
 
-<div class="max-w-2xl mx-auto space-y-5 sm:space-y-6 w-full">
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+<div class="max-w-2xl sm:mx-auto space-y-5 sm:space-y-6 w-full">
+    <div class="bg-white sm:rounded-xl border border-slate-200 shadow-sm overflow-hidden -mx-4 sm:mx-0">
         <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-slate-100">
             <h2 class="text-sm font-semibold text-slate-900">Business profile</h2>
             <p class="text-xs text-slate-400 mt-0.5">Shown in the sidebar and reports where your business name appears.</p>
@@ -68,17 +70,27 @@
             </div>
 
             <div class="pt-2 border-t border-slate-100">
-                <label class="flex items-start gap-3 cursor-pointer">
-                    <input type="checkbox"
-                           name="{{ form.staff_see_all_customers.html_name }}"
-                           id="{{ form.staff_see_all_customers.id_for_label }}"
-                           {% if form.staff_see_all_customers.value %}checked{% endif %}
-                           class="mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 flex-shrink-0"/>
-                    <span>
-                        <span class="text-sm font-medium text-slate-800 block">{{ form.staff_see_all_customers.label }}</span>
-                        <span class="text-xs text-slate-500 block mt-1 leading-relaxed">When on, every staff member can see all customers for your business. When off, staff only see customers assigned to them.</span>
-                    </span>
-                </label>
+                <div class="rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="min-w-0">
+                            <p class="text-sm font-medium text-slate-800">{{ form.staff_see_all_customers.label }}</p>
+                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                                When on, every staff member can see all customers for your business. When off, staff only see customers assigned to them.
+                            </p>
+                        </div>
+                        <label for="{{ form.staff_see_all_customers.id_for_label }}" class="relative inline-flex cursor-pointer items-center flex-shrink-0 mt-0.5">
+                            <input type="checkbox"
+                                   name="{{ form.staff_see_all_customers.html_name }}"
+                                   id="{{ form.staff_see_all_customers.id_for_label }}"
+                                   {% if form.staff_see_all_customers.value %}checked{% endif %}
+                                   class="sr-only peer"/>
+                            <div class="h-6 w-11 rounded-full bg-slate-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-200 transition-colors
+                                        peer-checked:bg-indigo-600"></div>
+                            <div class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform
+                                        peer-checked:translate-x-5"></div>
+                        </label>
+                    </div>
+                </div>
             </div>
 
             {% if form.non_field_errors %}
@@ -96,7 +108,7 @@
         </form>
     </div>
 
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="bg-white sm:rounded-xl border border-slate-200 shadow-sm overflow-hidden -mx-4 sm:mx-0">
         <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-slate-100">
             <h2 class="text-sm font-semibold text-slate-900">Owner account</h2>
             <p class="text-xs text-slate-400 mt-0.5">Sign-in identity for this business. Username and email are managed by your administrator.</p>

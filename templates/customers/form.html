@@ -17,9 +17,9 @@
 
 {% block page_content %}
 
-<div class="max-w-xl">
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
-        <div class="px-6 py-5 border-b border-slate-100">
+<div class="max-w-xl sm:mx-auto">
+    <div class="bg-white sm:rounded-xl border border-slate-200 shadow-sm -mx-4 sm:mx-0">
+        <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-slate-100">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
@@ -44,7 +44,7 @@
               hx-target="body"
               hx-push-url="true"
               hx-encoding="multipart/form-data"
-              class="px-6 py-5 space-y-4">
+              class="px-4 sm:px-6 py-4 sm:py-5 space-y-4">
             {% csrf_token %}
 
             {% if form.instance.pk and form.instance.customer_code %}
@@ -301,19 +301,21 @@
             </div>
             {% endif %}
 
-            <div class="flex items-center justify-between pt-2 border-t border-slate-100 mt-5">
-                <a href="{% url 'customers:list' %}"
-                   class="px-4 py-2 text-sm text-slate-600 hover:text-slate-900 font-medium transition-colors">
-                    Cancel
-                </a>
-                <button type="submit"
-                        class="inline-flex items-center gap-2 px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm shadow-indigo-200">
-                    <svg class="w-4 h-4 htmx-indicator animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-                    </svg>
-                    {% if form.instance.pk %}Save Changes{% else %}Add Customer{% endif %}
-                </button>
+            <div class="sticky bottom-0 -mx-4 sm:mx-0 px-4 sm:px-0 py-3 sm:py-0 bg-white/95 backdrop-blur border-t border-slate-100 sm:static sm:border-t-0 sm:bg-transparent">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:pt-2 sm:border-t sm:border-slate-100 sm:mt-5">
+                    <a href="{% url 'customers:list' %}"
+                       class="order-2 sm:order-1 px-4 py-2 text-sm text-slate-600 hover:text-slate-900 font-medium transition-colors text-center sm:text-left">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                            class="order-1 sm:order-2 inline-flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm shadow-indigo-200">
+                        <svg class="w-4 h-4 htmx-indicator animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                        </svg>
+                        {% if form.instance.pk %}Save Changes{% else %}Add Customer{% endif %}
+                    </button>
+                </div>
             </div>
 
         </form>
