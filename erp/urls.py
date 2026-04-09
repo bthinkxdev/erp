@@ -3,6 +3,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.shortcuts import redirect
 from django.urls import include, path
+import os
 
 
 def home_redirect(request):
@@ -22,5 +23,5 @@ urlpatterns = [
     path("vendor/",     include("vendors.urls")),
 ]
 
-if settings.DEBUG:
+if settings.DEBUG or os.getenv("DJANGO_SERVE_MEDIA", "").lower() in ("1", "true", "yes"):
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

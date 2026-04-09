@@ -34,6 +34,8 @@
         </div>
 
         <form method="post"
+              id="customer-form"
+              enctype="multipart/form-data"
               {% if form.instance.pk %}
               hx-post="{% url 'customers:edit' form.instance.pk %}"
               {% else %}
@@ -41,6 +43,7 @@
               {% endif %}
               hx-target="body"
               hx-push-url="true"
+              hx-encoding="multipart/form-data"
               class="px-6 py-5 space-y-4">
             {% csrf_token %}
 
@@ -127,7 +130,9 @@
                                    {% if form.assigned_day.errors %}border-red-400 bg-red-50{% endif %}">
                         {% for val, label in form.fields.assigned_day.choices %}
                         {% if val != "" %}
-                        <option value="{{ val }}" {% if form.assigned_day.value|stringformat:"s" == val|stringformat:"s" %}selected{% endif %}>{{ label }}</option>
+                        <option value="{{ val }}" {% if form.assigned_day.value|stringformat:"s" == val|stringformat:"s" %}selected{% endif %}>
+                            {% if val == 1 %}Sunday{% elif val == 2 %}Monday{% elif val == 3 %}Tuesday{% elif val == 4 %}Wednesday{% elif val == 5 %}Thursday{% elif val == 6 %}Friday{% elif val == 7 %}Saturday{% else %}{{ label }}{% endif %}
+                        </option>
                         {% endif %}
                         {% endfor %}
                     </select>
@@ -172,6 +177,71 @@
                           rows="3"
                           placeholder="Street, City, State…"
                           class="w-full px-3.5 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition resize-none">{{ form.address.value|default_if_none:'' }}</textarea>
+            </div>
+
+            <div class="rounded-lg border border-slate-200 bg-slate-50/60 px-4 py-3">
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-800">Customer photo</p>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Optional. JPG/PNG recommended.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        {% if form.instance.photo %}
+                        <img id="customer-photo-preview"
+                             src="{{ form.instance.photo.url }}"
+                             alt="Customer photo"
+                             class="w-10 h-10 rounded-full object-cover border border-slate-200 bg-white"/>
+                        {% else %}
+                        <div id="customer-photo-fallback"
+                             class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 text-xs font-semibold">
+                            {{ form.name.value|default_if_none:form.instance.name|default:"?"|first|upper }}
+                        </div>
+                        <img id="customer-photo-preview"
+                             src=""
+                             alt="Customer photo"
+                             class="hidden w-10 h-10 rounded-full object-cover border border-slate-200 bg-white"/>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button type="button"
+                                id="customer-photo-upload-btn"
+                                class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg bg-white border border-slate-300 text-slate-700 hover:border-slate-400 hover:bg-slate-50 transition-colors">
+                            Choose file
+                        </button>
+                        <button type="button"
+                                id="customer-photo-camera-btn"
+                                class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition-colors shadow-sm shadow-indigo-200">
+                            Take photo
+                        </button>
+                        <span id="customer-photo-filename" class="text-xs text-slate-500 truncate max-w-[280px]"></span>
+                    </div>
+
+                    <input type="file"
+                           name="{{ form.photo.html_name }}"
+                           id="{{ form.photo.id_for_label }}"
+                           accept="image/*"
+                           class="sr-only"/>
+                    <input type="file"
+                           id="customer-photo-camera-input"
+                           accept="image/*"
+                           capture="environment"
+                           class="sr-only"/>
+                    {% if form.photo.errors %}
+                    <p class="mt-1 text-xs text-red-600">{{ form.photo.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                {% if form.instance.photo %}
+                <label class="mt-3 inline-flex items-center gap-2 text-xs text-slate-600">
+                    <input type="checkbox"
+                           name="{{ form.remove_photo.html_name }}"
+                           class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"/>
+                    Remove current photo
+                </label>
+                {% endif %}
             </div>
 
             {{ form.latitude }}
@@ -323,8 +393,10 @@
         navigator.geolocation.getCurrentPosition(
             function (position) {
                 setGeoLoading(false);
-                latEl.value = position.coords.latitude;
-                lngEl.value = position.coords.longitude;
+                // DecimalField(max_digits=9, decimal_places=6) needs <= 6 decimals,
+                // otherwise Django validation can reject high-precision GPS values.
+                latEl.value = Number(position.coords.latitude).toFixed(6);
+                lngEl.value = Number(position.coords.longitude).toFixed(6);
                 showGeoCaptured(
                     position.coords.latitude,
                     position.coords.longitude,
@@ -357,6 +429,109 @@
             showGeoCaptured(lat, lng, null);
         }
     });
+})();
+</script>
+
+<script>
+(function () {
+    function wireCustomerPhotoPicker() {
+        var uploadBtn = document.getElementById("customer-photo-upload-btn");
+        var cameraBtn = document.getElementById("customer-photo-camera-btn");
+        var uploadInput = document.getElementById("{{ form.photo.id_for_label }}");
+        var cameraInput = document.getElementById("customer-photo-camera-input");
+        var filename = document.getElementById("customer-photo-filename");
+        var preview = document.getElementById("customer-photo-preview");
+        var fallback = document.getElementById("customer-photo-fallback");
+
+        if (!uploadBtn || !cameraBtn || !uploadInput || !cameraInput) return;
+
+        function setPreview(file) {
+            if (!file) return;
+            if (filename) filename.textContent = file.name || "Selected image";
+            if (!preview) return;
+            try {
+                var url = URL.createObjectURL(file);
+                preview.src = url;
+                preview.classList.remove("hidden");
+                if (fallback) fallback.classList.add("hidden");
+            } catch (e) {
+                // ignore preview failures
+            }
+        }
+
+        uploadBtn.addEventListener("click", function () {
+            uploadInput.click();
+        });
+
+        cameraBtn.addEventListener("click", function () {
+            cameraInput.click();
+        });
+
+        uploadInput.addEventListener("change", function () {
+            var f = uploadInput.files && uploadInput.files[0];
+            setPreview(f);
+        });
+
+        cameraInput.addEventListener("change", function () {
+            var f = cameraInput.files && cameraInput.files[0];
+            if (!f) return;
+            var dt = new DataTransfer();
+            dt.items.add(f);
+            uploadInput.files = dt.files;
+            setPreview(f);
+        });
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", wireCustomerPhotoPicker);
+    } else {
+        wireCustomerPhotoPicker();
+    }
+})();
+</script>
+
+<script>
+(function () {
+    function needsLocationConfirm(formEl) {
+        var lat = document.getElementById("latitude");
+        var lng = document.getElementById("longitude");
+        if (!lat || !lng) return false;
+        var latVal = (lat.value || "").trim();
+        var lngVal = (lng.value || "").trim();
+        return latVal === "" || lngVal === "";
+    }
+
+    function confirmNoLocation() {
+        return window.confirm("No location captured. Save this customer without location?");
+    }
+
+    function wireNoLocationConfirm() {
+        var formEl = document.getElementById("customer-form");
+        if (!formEl) return;
+
+        formEl.addEventListener("submit", function (evt) {
+            if (!needsLocationConfirm(formEl)) return;
+            if (!confirmNoLocation()) {
+                evt.preventDefault();
+                evt.stopPropagation();
+            }
+        });
+
+        document.body.addEventListener("htmx:beforeRequest", function (evt) {
+            var target = evt.target;
+            if (!target || target.id !== "customer-form") return;
+            if (!needsLocationConfirm(target)) return;
+            if (!confirmNoLocation()) {
+                evt.preventDefault();
+            }
+        });
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", wireNoLocationConfirm);
+    } else {
+        wireNoLocationConfirm();
+    }
 })();
 </script>
 

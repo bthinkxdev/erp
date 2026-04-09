@@ -43,6 +43,7 @@ class Customer(VendorAwareModel):
     longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     assigned_day = models.IntegerField(choices=ASSIGNED_DAY_CHOICES, default=1, db_index=True)
     customer_code = models.CharField(max_length=10, editable=False)
+    photo = models.ImageField(upload_to="customers/", blank=True, null=True)
 
     class Meta:
         constraints = [

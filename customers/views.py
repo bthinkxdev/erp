@@ -47,6 +47,33 @@ def _save_customer_or_add_form_errors(form, customer) -> bool:
     return True
 
 
+def _handle_customer_photo_side_effects(
+    *,
+    form: CustomerForm,
+    customer: Customer,
+    previous_photo,
+) -> None:
+    """
+    Applies photo removal / old-file cleanup after a successful save.
+    Keeps the "what file to keep" logic in one place to avoid double-saving the instance.
+    """
+    remove_photo = bool(getattr(form, "cleaned_data", {}).get("remove_photo"))
+    old_photo = previous_photo
+    new_photo = getattr(customer, "photo", None)
+
+    if remove_photo:
+        if old_photo:
+            old_photo.delete(save=False)
+        if new_photo and (not old_photo or new_photo.name != old_photo.name):
+            new_photo.delete(save=False)
+        customer.photo = None
+        customer.save(update_fields=["photo"])
+        return
+
+    if old_photo and new_photo and old_photo.name != new_photo.name:
+        old_photo.delete(save=False)
+
+
 @login_required
 def customer_list(request):
     vendor = _vendor(request)
@@ -70,8 +97,8 @@ def customer_list(request):
     paginator = Paginator(qs, 25)
     page_obj = paginator.get_page(request.GET.get("page"))
 
-    if is_hx_swap_into(request, "customer-table-body"):
-        return render(request, "customers/_rows.html", {
+    if is_hx_swap_into(request, "customer-results"):
+        return render(request, "customers/_results.html", {
             "customers": page_obj.object_list,
             "offset": (page_obj.number - 1) * paginator.per_page,
         })
@@ -121,8 +148,9 @@ def customer_add(request):
         return HttpResponseForbidden()
 
     if request.method == "POST":
-        form = CustomerForm(request.POST, vendor=vendor, request=request)
+        form = CustomerForm(request.POST, request.FILES, vendor=vendor, request=request)
         if form.is_valid():
+            previous_photo = None
             customer = form.save(commit=False)
             customer.vendor = vendor
             if getattr(request.user, "role", None) == User.Roles.STAFF:
@@ -130,6 +158,7 @@ def customer_add(request):
                     customer.staff = request.user.staff_profile
             if not _save_customer_or_add_form_errors(form, customer):
                 return render(request, "customers/form.html", {"form": form})
+            _handle_customer_photo_side_effects(form=form, customer=customer, previous_photo=previous_photo)
             messages.success(request, f"Customer '{customer.name}' added.")
             return redirect("customers:list")
     else:
@@ -150,7 +179,8 @@ def customer_edit(request, pk):
     customer = get_secure_object(Customer.objects.all(), request, pk=pk)
 
     if request.method == "POST":
-        form = CustomerForm(request.POST, instance=customer, vendor=vendor, request=request)
+        previous_photo = customer.photo
+        form = CustomerForm(request.POST, request.FILES, instance=customer, vendor=vendor, request=request)
         if form.is_valid():
             customer = form.save(commit=False)
             if getattr(request.user, "role", None) == User.Roles.STAFF:
@@ -158,6 +188,7 @@ def customer_edit(request, pk):
                     customer.staff = request.user.staff_profile
             if not _save_customer_or_add_form_errors(form, customer):
                 return render(request, "customers/form.html", {"form": form})
+            _handle_customer_photo_side_effects(form=form, customer=customer, previous_photo=previous_photo)
             messages.success(request, f"Customer '{customer.name}' updated.")
             return redirect("customers:list")
     else:

@@ -8,6 +8,8 @@ from .models import Customer
 
 
 class CustomerForm(forms.ModelForm):
+    remove_photo = forms.BooleanField(required=False)
+
     class Meta:
         model = Customer
         fields = (
@@ -19,11 +21,13 @@ class CustomerForm(forms.ModelForm):
             "assigned_day",
             "latitude",
             "longitude",
+            "photo",
         )
         widgets = {
             "loan_amount": forms.NumberInput(attrs={"step": "0.01", "min": "0.01"}),
             "latitude": forms.HiddenInput(attrs={"id": "latitude"}),
             "longitude": forms.HiddenInput(attrs={"id": "longitude"}),
+            "photo": forms.ClearableFileInput(attrs={"accept": "image/*"}),
         }
 
     def __init__(self, *args, vendor=None, request=None, **kwargs):

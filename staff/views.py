@@ -57,10 +57,10 @@ def staff_list(request):
     paginator = Paginator(qs, 25)
     page_obj = paginator.get_page(request.GET.get("page"))
 
-    if is_hx_swap_into(request, "staff-table-body"):
+    if is_hx_swap_into(request, "staff-results"):
         return render(
             request,
-            "staff/_rows.html",
+            "staff/_results.html",
             {
                 "staff_members": page_obj.object_list,
                 "offset": (page_obj.number - 1) * paginator.per_page,

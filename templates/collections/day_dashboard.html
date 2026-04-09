@@ -31,7 +31,7 @@
                         hx-target="#day-customer-list"
                         hx-swap="innerHTML"
                         hx-indicator="#day-hx-loading">
-                    Day {{ d }}
+                    {% if d == 1 %}Sunday{% elif d == 2 %}Monday{% elif d == 3 %}Tuesday{% elif d == 4 %}Wednesday{% elif d == 5 %}Thursday{% elif d == 6 %}Friday{% elif d == 7 %}Saturday{% else %}Day {{ d }}{% endif %}
                 </button>
                 {% endfor %}
             </div>

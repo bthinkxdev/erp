@@ -1,0 +1,91 @@
+{% if staff_members %}
+<div class="sm:hidden">
+    <div class="px-3 pb-2 text-[11px] text-slate-400">
+        {{ staff_members|length }} result{{ staff_members|length|pluralize }}
+    </div>
+    <div class="space-y-2">
+        {% for s in staff_members %}
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-3">
+            <div class="flex items-start justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
+                        <span class="text-white text-sm font-semibold">{{ s.user.username|first|upper }}</span>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-sm font-semibold text-slate-900 truncate">{{ s.user.username }}</p>
+                        <p class="text-[11px] text-slate-500 truncate">{{ s.user.email }}</p>
+                        {% if s.whatsapp_number %}
+                        <p class="text-[11px] text-slate-500 font-mono truncate">WA: {{ s.whatsapp_number }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="flex flex-col items-end gap-2 flex-shrink-0">
+                    {% if s.is_active %}
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80">Active</span>
+                    {% else %}
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">Inactive</span>
+                    {% endif %}
+                    <button type="button"
+                            class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-violet-50 text-violet-800 border border-violet-200/80"
+                            hx-get="{% url 'staff:collections_ledger_modal' %}?staff={{ s.pk }}"
+                            hx-target="#staff-ledger-modal-host"
+                            hx-swap="innerHTML">
+                        Ledger
+                    </button>
+                </div>
+            </div>
+
+            <div class="mt-3 flex flex-wrap gap-2">
+                <a href="{% url 'staff:edit' s.pk %}"
+                   class="flex-1 min-w-[120px] inline-flex justify-center px-3 py-2 text-xs font-semibold rounded-lg bg-white text-slate-700 border border-slate-200">
+                    Edit
+                </a>
+                <a href="{% url 'staff:delete' s.pk %}"
+                   hx-delete="{% url 'staff:delete' s.pk %}"
+                   hx-confirm="Archive {{ s.user.username }}? Their sign-in will be disabled and they will disappear from this list."
+                   hx-target="closest div.bg-white"
+                   hx-swap="outerHTML swap:0.3s"
+                   class="flex-1 min-w-[120px] inline-flex justify-center px-3 py-2 text-xs font-semibold rounded-lg bg-rose-50 text-rose-700 border border-rose-100">
+                    Archive
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="hidden sm:block overflow-x-auto">
+    <table class="w-full">
+        <thead>
+            <tr class="border-b border-slate-100">
+                <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">#</th>
+                <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">User</th>
+                <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Email</th>
+                <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide hidden md:table-cell">WhatsApp</th>
+                <th class="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Status</th>
+                <th class="px-5 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wide">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-50">
+            {% include "staff/_rows.html" %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="px-5 py-16 text-center">
+    <div class="flex flex-col items-center">
+        <div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center mb-3">
+            <svg class="w-6 h-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+        </div>
+        <p class="text-sm font-medium text-slate-700 mb-1">
+            {% if request.GET.q %}No results for "{{ request.GET.q }}"{% else %}No staff yet{% endif %}
+        </p>
+        <p class="text-xs text-slate-400">
+            {% if request.GET.q %}Try a different search term.{% else %}Add staff so they can record collections under your vendor.{% endif %}
+        </p>
+    </div>
+</div>
+{% endif %}
+
