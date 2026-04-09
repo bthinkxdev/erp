@@ -53,11 +53,28 @@ def ledger_context(
     ledger_collect_url: str = "",
     ledger_panel_selector: str = "#ledger-modal-panel",
 ):
-    cols = (
-        secure_queryset(Collection.objects.filter(customer=customer), request)
-        .select_related("staff__user")
-        .order_by("-date", "-id")
-    )
+    user = request.user
+    role = getattr(user, "role", None)
+
+    # IMPORTANT: For ledger consistency, staff should see the full collection history
+    # for a customer within their vendor, even if collections were recorded by the
+    # vendor owner or other staff members.
+    if role == User.Roles.STAFF:
+        sp = getattr(user, "staff_profile", None)
+        if sp is None or sp.vendor_id != customer.vendor_id:
+            cols = Collection.objects.none()
+        else:
+            cols = (
+                Collection.objects.filter(vendor_id=customer.vendor_id, customer=customer)
+                .select_related("staff__user")
+                .order_by("-date", "-id")
+            )
+    else:
+        cols = (
+            secure_queryset(Collection.objects.filter(customer=customer), request)
+            .select_related("staff__user")
+            .order_by("-date", "-id")
+        )
     agg = cols.aggregate(total=Sum("amount"))
     total_paid = agg["total"] or Decimal("0")
     balance = customer.loan_amount - total_paid

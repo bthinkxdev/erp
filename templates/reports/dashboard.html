@@ -7,26 +7,27 @@
 
 {% block header_actions %}
 <a href="{% url 'collections:add' %}"
-   class="inline-flex items-center gap-2 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm shadow-indigo-200">
+   class="inline-flex items-center justify-center gap-2 px-3.5 py-2 w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm shadow-indigo-200">
     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
     </svg>
     <span class="hidden sm:inline">New Collection</span>
+    <span class="sm:hidden">Collect</span>
 </a>
 {% endblock %}
 
 {% block page_content %}
 
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+<div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-5 sm:mb-6">
 
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-5">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-4 sm:p-5">
         <div class="flex items-start justify-between">
             <div>
                 <p class="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">Total Collection</p>
-                <p class="text-2xl font-bold text-slate-900 tabular-nums">₹{{ summary.total_collection|default:"0.00" }}</p>
+                <p class="text-xl sm:text-2xl font-bold text-slate-900 tabular-nums">₹{{ summary.total_collection|default:"0.00" }}</p>
                 <p class="text-xs text-slate-400 mt-1.5">All time</p>
             </div>
-            <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center flex-shrink-0">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center flex-shrink-0">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
@@ -34,16 +35,16 @@
         </div>
     </div>
 
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-5">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-4 sm:p-5">
         <div class="flex items-start justify-between">
             <div>
                 <p class="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">Today</p>
-                <p class="text-2xl font-bold text-slate-900 tabular-nums" id="today-kpi-value">
+                <p class="text-xl sm:text-2xl font-bold text-slate-900 tabular-nums" id="today-kpi-value">
                     <span class="inline-block w-20 h-7 bg-slate-100 animate-pulse rounded-lg"></span>
                 </p>
                 <p class="text-xs text-slate-400 mt-1.5">{{ today|date:"d M Y" }}</p>
             </div>
-            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center flex-shrink-0">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center flex-shrink-0">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
@@ -51,14 +52,14 @@
         </div>
     </div>
 
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-5">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-4 sm:p-5">
         <div class="flex items-start justify-between">
             <div>
                 <p class="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">Customers</p>
-                <p class="text-2xl font-bold text-slate-900 tabular-nums">{{ summary.total_customers|default:"0" }}</p>
+                <p class="text-xl sm:text-2xl font-bold text-slate-900 tabular-nums">{{ summary.total_customers|default:"0" }}</p>
                 <p class="text-xs text-slate-400 mt-1.5">Active accounts</p>
             </div>
-            <div class="w-10 h-10 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center flex-shrink-0">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center flex-shrink-0">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
@@ -68,17 +69,17 @@
 
     {% if request.user.role == 'vendor' %}
     <a href="{% url 'staff:list' %}"
-       class="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-amber-200/80 transition-all p-5 block text-inherit no-underline focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+       class="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-amber-200/80 transition-all p-4 sm:p-5 block text-inherit no-underline focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
     {% else %}
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-5">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-4 sm:p-5">
     {% endif %}
         <div class="flex items-start justify-between">
             <div>
                 <p class="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">Staff</p>
-                <p class="text-2xl font-bold text-slate-900 tabular-nums">{{ summary.total_staff|default:"0" }}</p>
+                <p class="text-xl sm:text-2xl font-bold text-slate-900 tabular-nums">{{ summary.total_staff|default:"0" }}</p>
                 <p class="text-xs text-slate-400 mt-1.5">Active members</p>
             </div>
-            <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6a4 4 0 11-8 0 4 4 0 018 0zm-4 7a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                 </svg>
@@ -91,11 +92,11 @@
     {% endif %}
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
 
     <div class="lg:col-span-2">
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
-            <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="flex items-center justify-between px-4 sm:px-5 py-3.5 sm:py-4 border-b border-slate-100">
                 <div>
                     <h2 class="text-sm font-semibold text-slate-900">Today's Collections</h2>
                     <p class="text-xs text-slate-400 mt-0.5">Live — {{ today|date:"d M Y" }}</p>
@@ -114,7 +115,7 @@
                  hx-target="#today-box"
                  hx-swap="innerHTML"
                  hx-indicator="closest .bg-white">
-                <div class="px-5 py-4 space-y-3 animate-pulse">
+                <div class="px-4 sm:px-5 py-4 space-y-3 animate-pulse">
                     {% for i in "123"|make_list %}
                     <div class="flex justify-between items-center">
                         <div class="h-3.5 bg-slate-100 rounded-full w-32"></div>
@@ -127,8 +128,8 @@
     </div>
 
     <div>
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
-            <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="flex items-center justify-between px-4 sm:px-5 py-3.5 sm:py-4 border-b border-slate-100">
                 <div>
                     <h2 class="text-sm font-semibold text-slate-900">Weekly Report</h2>
                     <p class="text-xs text-slate-400 mt-0.5">By week number</p>
@@ -139,7 +140,7 @@
                  hx-trigger="load"
                  hx-target="#week-box"
                  hx-swap="innerHTML">
-                <div class="px-5 py-8 text-center animate-pulse">
+                <div class="px-4 sm:px-5 py-8 text-center animate-pulse">
                     <div class="h-4 bg-slate-100 rounded-full w-28 mx-auto mb-2"></div>
                     <div class="h-8 bg-slate-100 rounded-lg w-20 mx-auto"></div>
                 </div>
@@ -148,14 +149,14 @@
     </div>
 
     <div class="lg:col-span-3">
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
-            <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="flex items-center justify-between px-4 sm:px-5 py-3.5 sm:py-4 border-b border-slate-100">
                 <div>
                     <h2 class="text-sm font-semibold text-slate-900">Staff Performance</h2>
                     <p class="text-xs text-slate-400 mt-0.5">Collection totals by staff member</p>
                 </div>
                 {% if request.user.reports_allowed %}
-                <a href="{% url 'reports:analytics' %}" class="text-xs text-indigo-600 hover:text-indigo-700 font-medium transition-colors">
+                <a href="{% url 'reports:analytics' %}" class="text-xs text-indigo-600 hover:text-indigo-700 font-semibold transition-colors">
                     View full report →
                 </a>
                 {% endif %}
@@ -165,7 +166,7 @@
                  hx-trigger="load"
                  hx-target="#staff-box"
                  hx-swap="innerHTML">
-                <div class="px-5 py-4 space-y-3 animate-pulse">
+                <div class="px-4 sm:px-5 py-4 space-y-3 animate-pulse">
                     {% for i in "12345"|make_list %}
                     <div class="flex justify-between items-center py-1">
                         <div class="flex items-center gap-3">

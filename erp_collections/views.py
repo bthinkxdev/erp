@@ -67,12 +67,23 @@ def get_customers_by_day_htmx(request, day: int):
     )
     customers = list(qs)
     if customers:
-        paid_rows = (
-            secure_queryset(Collection.objects.all(), request)
-            .filter(customer_id__in=[c.pk for c in customers])
-            .values("customer_id")
-            .annotate(total=Sum("amount"))
-        )
+        customer_ids = [c.pk for c in customers]
+
+        # For consistency with the ledger modal, staff should see vendor-wide paid/balance
+        # for each customer (includes collections recorded by vendor owner and other staff).
+        if getattr(request.user, "role", None) == User.Roles.STAFF:
+            paid_rows = (
+                Collection.objects.filter(vendor=vendor, customer_id__in=customer_ids)
+                .values("customer_id")
+                .annotate(total=Sum("amount"))
+            )
+        else:
+            paid_rows = (
+                secure_queryset(Collection.objects.all(), request)
+                .filter(customer_id__in=customer_ids)
+                .values("customer_id")
+                .annotate(total=Sum("amount"))
+            )
         paid_map = {row["customer_id"]: row["total"] or Decimal("0") for row in paid_rows}
         for c in customers:
             paid = paid_map.get(c.pk, Decimal("0"))
