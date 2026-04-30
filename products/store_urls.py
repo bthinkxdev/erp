@@ -11,4 +11,9 @@ urlpatterns = [
         store_views.store_category_products,
         name="category",
     ),
+    path(
+        "<int:vendor_id>/product/<int:product_id>/",
+        store_views.store_product_detail,
+        name="product_detail",
+    ),
 ]

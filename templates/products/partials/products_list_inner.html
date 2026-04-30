@@ -37,15 +37,10 @@
                 <div class="flex items-end justify-between mb-4">
                     <div>
                         <p class="text-lg font-bold text-slate-900 tabular-nums">₹{{ product.price }}</p>
-                        {% if product.mrp != product.price %}
+                        {% if product.mrp and product.mrp != product.price %}
                         <p class="text-xs text-slate-400 line-through tabular-nums">₹{{ product.mrp }}</p>
                         {% endif %}
                     </div>
-                    {% if product.mrp != product.price %}
-                    <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
-                        {% widthratio product.mrp|add:"-1" product.mrp 100 %}% off
-                    </span>
-                    {% endif %}
                 </div>
 
                 {% if request.user.can_manage_products %}
@@ -127,7 +122,7 @@
                         {% endif %}
                     </td>
                     <td class="px-5 py-3.5 text-right text-sm font-bold text-slate-900 tabular-nums">₹{{ product.price }}</td>
-                    <td class="px-5 py-3.5 text-right text-sm text-slate-400 line-through tabular-nums">₹{{ product.mrp }}</td>
+                    <td class="px-5 py-3.5 text-right text-sm tabular-nums">{% if product.mrp %}<span class="text-slate-400 line-through">₹{{ product.mrp }}</span>{% else %}<span class="text-slate-300">—</span>{% endif %}</td>
                     <td class="px-5 py-3.5 text-center">
                         {% if product.is_active %}
                         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">

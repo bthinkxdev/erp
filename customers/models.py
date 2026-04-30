@@ -21,7 +21,7 @@ def _vendor_name_prefix(name: str) -> str:
 
 
 class Customer(VendorAwareModel):
-    ASSIGNED_DAY_CHOICES = [(i, f"Day {i}") for i in range(1, 8)]
+    ASSIGNED_DAY_CHOICES = [(0, "Monthly")] + [(i, f"Day {i}") for i in range(1, 8)]
     staff = models.ForeignKey(
         "staff.Staff",
         on_delete=models.CASCADE,
@@ -67,7 +67,7 @@ class Customer(VendorAwareModel):
 
     def clean(self):
         super().clean()
-        if self.assigned_day is not None and not (1 <= self.assigned_day <= 7):
+        if self.assigned_day is not None and not (0 <= self.assigned_day <= 7):
             raise ValidationError({"assigned_day": _("Assigned day must be between 1 and 7.")})
         if self.loan_amount is not None and self.loan_amount <= 0:
             raise ValidationError({"loan_amount": _("Loan amount must be greater than zero.")})

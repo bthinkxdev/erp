@@ -1,7 +1,7 @@
 {% load store_tags %}
 {% whatsapp_order_url store_vendor store_staff product as wa_url %}
-{% discount_pct_for product as pct_off %}
 <article class="overflow-hidden rounded-[1.35rem] bg-white shadow-md shadow-slate-900/6 ring-1 ring-slate-200/85 flex flex-col">
+    <a href="{% url 'store:product_detail' store_vendor.pk product.pk %}{{ store_staff_query }}" class="block">
     <div class="relative aspect-[4/3] w-full bg-slate-100">
         {% if product.image %}
         <img src="{{ product.image.url }}" alt="" class="absolute inset-0 h-full w-full object-cover"/>
@@ -12,12 +12,8 @@
             </svg>
         </div>
         {% endif %}
-        {% if pct_off %}
-        <div class="absolute right-3 top-3 rounded-lg bg-gradient-to-r from-rose-600 to-orange-500 px-2.5 py-1 text-[11px] font-bold tracking-wide text-white shadow-md shadow-rose-900/25 ring-1 ring-white/30">
-            {{ pct_off }}% OFF
-        </div>
-        {% endif %}
     </div>
+    </a>
 
     <div class="flex flex-1 flex-col px-5 pt-5 pb-5">
         <h2 class="text-base font-bold leading-snug tracking-tight text-slate-900">{{ product.name }}</h2>

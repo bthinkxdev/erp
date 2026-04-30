@@ -2,7 +2,7 @@
     <div class="px-5 py-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-2">
         <div>
             <h2 class="text-sm font-semibold text-slate-900">
-                {% if day == 1 %}Sunday{% elif day == 2 %}Monday{% elif day == 3 %}Tuesday{% elif day == 4 %}Wednesday{% elif day == 5 %}Thursday{% elif day == 6 %}Friday{% elif day == 7 %}Saturday{% else %}Day {{ day }}{% endif %}
+                {% if day == 0 %}Monthly{% elif day == 1 %}Sunday{% elif day == 2 %}Monday{% elif day == 3 %}Tuesday{% elif day == 4 %}Wednesday{% elif day == 5 %}Thursday{% elif day == 6 %}Friday{% elif day == 7 %}Saturday{% else %}Day {{ day }}{% endif %}
             </h2>
             <p class="text-xs text-slate-500 mt-0.5">{{ customers|length }} customer{{ customers|length|pluralize }}</p>
         </div>

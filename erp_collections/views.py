@@ -41,7 +41,7 @@ def day_dashboard(request):
         request,
         "collections/day_dashboard.html",
         {
-            "day_choices": range(1, 8),
+            "day_choices": [0] + list(range(1, 8)),
         },
     )
 
@@ -56,8 +56,8 @@ def get_customers_by_day_htmx(request, day: int):
     vendor = _vendor(request)
     if not vendor:
         return HttpResponseForbidden()
-    if day < 1 or day > 7:
-        return HttpResponseBadRequest("Day must be 1–7.")
+    if day < 0 or day > 7:
+        return HttpResponseBadRequest("Day must be 0–7.")
 
     qs = (
         secure_queryset(Customer.objects.all(), request)

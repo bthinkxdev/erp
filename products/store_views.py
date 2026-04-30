@@ -25,6 +25,23 @@ def store_home(request, vendor_id):
     )
 
 
+def store_product_detail(request, vendor_id, product_id):
+    vendor, staff = resolve_store_context(request, vendor_id)
+    product = get_object_or_404(Product, pk=product_id, vendor_id=vendor.pk, is_active=True)
+    images = [img for img in [product.image or None, product.image2 or None, product.image3 or None] if img]
+    return render(
+        request,
+        "store/product_detail.html",
+        {
+            "store_vendor": vendor,
+            "store_staff": staff,
+            "store_staff_query": store_staff_query_fragment(staff),
+            "product": product,
+            "images": images,
+        },
+    )
+
+
 def store_category_products(request, vendor_id, category_id):
     vendor, staff = resolve_store_context(request, vendor_id)
     category = get_object_or_404(

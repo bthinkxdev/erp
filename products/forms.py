@@ -24,7 +24,7 @@ class ProductCategoryForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ("name", "category", "description", "image", "price", "mrp", "is_active")
+        fields = ("name", "category", "description", "image", "image2", "image3", "price", "mrp", "is_active")
         widgets = {
             "category": forms.Select(
                 attrs={
@@ -38,6 +38,7 @@ class ProductForm(forms.ModelForm):
 
     def __init__(self, *args, vendor=None, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["mrp"].required = False
         if vendor is not None:
             self.fields["category"].queryset = ProductCategory.objects.filter(
                 vendor=vendor, is_active=True
@@ -46,3 +47,11 @@ class ProductForm(forms.ModelForm):
             self.fields["category"].empty_label = "No category"
         else:
             self.fields["category"].queryset = ProductCategory.objects.none()
+
+    @property
+    def image_slots(self):
+        return [
+            ("image", self["image"], "Photo 1 (Main)"),
+            ("image2", self["image2"], "Photo 2"),
+            ("image3", self["image3"], "Photo 3"),
+        ]

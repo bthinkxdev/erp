@@ -116,7 +116,7 @@
                 <div>
                     <label for="{{ form.mrp.id_for_label }}"
                            class="block text-xs font-medium text-slate-700 mb-1.5">
-                        MRP (₹) <span class="text-red-500">*</span>
+                        MRP (₹) <span class="text-slate-400 font-normal">(optional)</span>
                     </label>
                     <div class="relative">
                         <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-medium text-slate-400">₹</span>
@@ -135,28 +135,33 @@
             </div>
 
             <div>
-                <label class="block text-xs font-medium text-slate-700 mb-1.5">
-                    Product Image
-                    <span class="text-slate-400 font-normal">(optional)</span>
+                <label class="block text-xs font-medium text-slate-700 mb-2">
+                    Product Photos
+                    <span class="text-slate-400 font-normal">(up to 3 photos, optional)</span>
                 </label>
-                {% if form.instance.image %}
-                <div class="mb-2 flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
-                    <img src="{{ form.instance.image.url }}" alt="Current" class="w-12 h-12 object-cover rounded-lg"/>
-                    <div>
-                        <p class="text-xs font-medium text-slate-600">Current image</p>
-                        <p class="text-xs text-slate-400 truncate max-w-[200px]">{{ form.instance.image.name }}</p>
+                <div class="space-y-3">
+                    {% for slot, field, label in form.image_slots %}
+                    <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                        <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-2">{{ label }}</p>
+                        {% if field.value %}
+                        <div class="mb-2 flex items-center gap-3">
+                            <img src="{{ field.value.url }}" alt="" class="w-12 h-12 object-cover rounded-lg border border-slate-200"/>
+                            <p class="text-xs text-slate-400 truncate max-w-[180px]">{{ field.value.name }}</p>
+                        </div>
+                        {% endif %}
+                        <input type="file"
+                               name="{{ field.html_name }}"
+                               id="{{ field.id_for_label }}"
+                               accept="image/*"
+                               class="block w-full text-sm text-slate-500
+                                      file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0
+                                      file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700
+                                      hover:file:bg-indigo-100 file:transition-colors file:cursor-pointer"/>
+                        {% if field.errors %}<p class="mt-1 text-xs text-red-600">{{ field.errors.0 }}</p>{% endif %}
                     </div>
+                    {% endfor %}
                 </div>
-                {% endif %}
-                <input type="file"
-                       name="{{ form.image.html_name }}"
-                       id="{{ form.image.id_for_label }}"
-                       accept="image/*"
-                       class="block w-full text-sm text-slate-500
-                              file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0
-                              file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700
-                              hover:file:bg-indigo-100 file:transition-colors file:cursor-pointer"/>
-                <p class="mt-1 text-xs text-slate-400">PNG, JPG, WEBP up to 5MB</p>
+                <p class="mt-1.5 text-xs text-slate-400">PNG, JPG, WEBP up to 5MB each</p>
             </div>
 
             <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200">
