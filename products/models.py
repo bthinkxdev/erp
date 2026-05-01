@@ -41,7 +41,7 @@ class Product(VendorAwareModel):
     image2 = models.ImageField(upload_to="products/", blank=True, null=True)
     image3 = models.ImageField(upload_to="products/", blank=True, null=True)
     mrp = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     is_active = models.BooleanField(default=True, db_index=True)
 
     class Meta:
@@ -54,9 +54,7 @@ class Product(VendorAwareModel):
 
     def clean(self):
         super().clean()
-        if self.price is None or self.mrp is None:
-            return
-        if self.price > self.mrp:
+        if self.price is not None and self.mrp is not None and self.price > self.mrp:
             raise ValidationError({"price": _("Price must be less than or equal to MRP.")})
         if self.category_id and self.vendor_id:
             if getattr(self.category, "vendor_id", None) != self.vendor_id:

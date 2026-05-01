@@ -38,6 +38,7 @@ class ProductForm(forms.ModelForm):
 
     def __init__(self, *args, vendor=None, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["price"].required = False
         self.fields["mrp"].required = False
         if vendor is not None:
             self.fields["category"].queryset = ProductCategory.objects.filter(

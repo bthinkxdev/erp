@@ -23,8 +23,12 @@
 
         <div class="mt-4 flex flex-wrap items-end gap-2 border-t border-slate-100 pt-4">
             <div class="min-w-0 flex-1">
+                {% if product.price != None %}
                 <p class="text-2xl font-bold tabular-nums tracking-tight text-slate-900">₹{{ product.price }}</p>
-                {% if product.mrp and product.mrp != product.price %}
+                {% else %}
+                <p class="text-sm font-semibold text-slate-500">Price on request</p>
+                {% endif %}
+                {% if product.price != None and product.mrp and product.mrp != product.price %}
                 <p class="mt-0.5 text-sm font-medium text-slate-400 line-through tabular-nums">₹{{ product.mrp }}</p>
                 {% endif %}
             </div>

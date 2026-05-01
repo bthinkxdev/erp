@@ -15,16 +15,20 @@ def normalize_wa_me_number(raw: str) -> str:
     return re.sub(r"\D", "", str(raw))
 
 
-def build_whatsapp_order_message(*, product_name: str, price) -> str:
+def build_whatsapp_order_message(*, product_name: str, price=None) -> str:
+    lines = [
+        "Hello, I want to order:",
+        "",
+        f"Product: {product_name}",
+    ]
+    if price is None or price == "":
+        return "\n".join(lines)
     if isinstance(price, Decimal):
         price_str = f"{price:.2f}"
     else:
         price_str = str(price)
-    return (
-        "Hello, I want to order:\n\n"
-        f"Product: {product_name}\n"
-        f"Price: {price_str}"
-    )
+    lines.append(f"Price: {price_str}")
+    return "\n".join(lines)
 
 
 def whatsapp_order_url_for_product(

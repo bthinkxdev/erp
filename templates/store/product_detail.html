@@ -59,8 +59,12 @@
     <h1 class="text-2xl font-bold tracking-tight text-slate-900 leading-snug">{{ product.name }}</h1>
 
     <div class="mt-3 flex flex-wrap items-end gap-3">
+        {% if product.price != None %}
         <p class="text-3xl font-bold tabular-nums tracking-tight text-slate-900">₹{{ product.price }}</p>
-        {% if product.mrp and product.mrp != product.price %}
+        {% else %}
+        <p class="text-base font-semibold text-slate-500">Price on request</p>
+        {% endif %}
+        {% if product.price != None and product.mrp and product.mrp != product.price %}
         <p class="text-lg font-medium text-slate-400 line-through tabular-nums">₹{{ product.mrp }}</p>
         {% endif %}
     </div>
