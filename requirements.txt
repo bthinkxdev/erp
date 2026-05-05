@@ -1,4 +1,4 @@
-# EcomicX ERP — runtime dependencies
+# ERP — runtime dependencies
 # Python: 3.10, 3.11, 3.12, or 3.13 (required by Django 5.2)
 #
 # Install:  python -m pip install -r requirements.txt
